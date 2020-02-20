@@ -123,8 +123,6 @@ void solve(int /*caseNumber*/)
 {
 	Input input = getInputs();
 	Result result = solveCase(input);
-	//std::cout << "Case #" << caseNumber << ": " << result.toString() << std::endl;
-	
 	std::cout << result.toString() << std::endl;
 }
 
@@ -139,6 +137,4 @@ int main()
 	}*/
 
 	solve(0);
-
-	return 0;
 }
