@@ -57,6 +57,5 @@ void solve(int caseNumber)
 int main()
 {
     
-
 	return 0;
 }
