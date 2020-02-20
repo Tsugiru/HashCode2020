@@ -25,7 +25,7 @@
       "type": "shell",
       "label": "run active file",
       "command": "./${fileBasenameNoExtension}",
-      "args": ["<", "b.txt", ">", "output.txt"],
+      "args": ["<", "c.txt", ">", "output.txt"],
       "options": {
         "cwd": "${fileDirname}"
       },

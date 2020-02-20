@@ -84,9 +84,8 @@ Result solveCase(Input & input)
         return lhs.processDays < rhs.processDays;
     });
 
-    int sum = 0, i = 0;
-    vector<int> used;
-    for(; i < input.libraries.size() && sum <= input.scanDays; i++) {
+    int i = 0;
+    for(; i < input.libraries.size(); i++) {
         vector<int> bookIdsUsed;
 
         for(int j = 0; j < input.libraries[i].numberOfBooks; j++) {
@@ -97,7 +96,6 @@ Result solveCase(Input & input)
             }
         }
         result.librariesOutputs.push_back({input.libraries[i].id, bookIdsUsed.size(), bookIdsUsed});
-        sum += input.libraries[i].processDays;
     }
 
     result.numberOfLibraries = i;

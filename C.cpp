@@ -80,24 +80,17 @@ Result solveCase(Input & input)
 {
 	Result result;
 	
-    std::sort(begin(input.libraries), end(input.libraries), [](const Library &lhs, const Library &rhs) {
-        return lhs.processDays < rhs.processDays;
+    std::sort(rbegin(input.libraries), rend(input.libraries), [&input](const Library &lhs, const Library &rhs) {
+        long double scoreweight = 1, processweight = 1;
+        double suml = 0, sumr = 0;
+        for(int id : lhs.bookIds) suml += input.books[id].score;
+        for(int id : rhs.bookIds) sumr += input.books[id].score;
+        return scoreweight*suml / (lhs.processDays*processweight) < scoreweight*sumr / (rhs.processDays*processweight);
     });
 
-    int sum = 0, i = 0;
-    vector<int> used;
-    for(; i < input.libraries.size() && sum <= input.scanDays; i++) {
-        vector<int> bookIdsUsed;
-
-        for(int j = 0; j < input.libraries[i].numberOfBooks; j++) {
-            int currentBookId = input.libraries[i].bookIds[j];
-            if(!input.books[currentBookId].shipped) {
-                bookIdsUsed.push_back(currentBookId);
-                input.books[currentBookId].shipped = true;
-            }
-        }
-        result.librariesOutputs.push_back({input.libraries[i].id, bookIdsUsed.size(), bookIdsUsed});
-        sum += input.libraries[i].processDays;
+    int i = 0;
+    for(; i < input.libraries.size(); i++) {
+        result.librariesOutputs.push_back({input.libraries[i].id, input.libraries[i].numberOfBooks, input.libraries[i].bookIds});
     }
 
     result.numberOfLibraries = i;
