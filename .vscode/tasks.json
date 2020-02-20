@@ -3,7 +3,7 @@
   "tasks": [
     {
       "type": "shell",
-      "label": "g++ build active file",
+      "label": "g++ build active file debug",
       "command": "/usr/bin/g++",
       "args": ["-g", "${file}", "-o", "${fileDirname}/${fileBasenameNoExtension}"],
       "options": {
@@ -13,9 +13,19 @@
     },
     {
       "type": "shell",
+      "label": "g++ build active file",
+      "command": "/usr/bin/g++",
+      "args": ["${file}", "-o", "${fileDirname}/${fileBasenameNoExtension}"],
+      "options": {
+        "cwd": "/usr/bin"
+      },
+      "problemMatcher": ["$gcc"],
+    },
+    {
+      "type": "shell",
       "label": "run active file",
       "command": "./${fileBasenameNoExtension}",
-      "args": ["<", "input.txt"],
+      "args": ["<", "input.txt", ">", "output.txt"],
       "options": {
         "cwd": "${fileDirname}"
       },
