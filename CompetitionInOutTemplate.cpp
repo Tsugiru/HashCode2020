@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include <fstream>
 #include <vector>
 #include <unordered_map>
@@ -13,11 +14,18 @@ using namespace std;
 
 struct Library
 {
+    int id;
 	int numberOfBooks;
 	std::vector<int> bookIds;
 
 	int processDays;
 	int shippingDays;
+};
+
+struct Book
+{
+    int score;
+    bool shipped = false;
 };
 
 struct Input
@@ -26,7 +34,7 @@ struct Input
 	int numberOfLibraries;
 	int scanDays;
 
-	std::vector<int> bookScores;
+	std::vector<Book> bookScores;
 	std::vector<Library> libraries;
 };
 
@@ -39,15 +47,12 @@ struct LibraryOutput
 
 struct Result
 {
-	// Fill Output info needed
-
 	int numberOfLibraries = 0;
 
 	std::vector<LibraryOutput> librariesOutputs;
 
 	std::string toString() const
 	{
-		// Fill Format of output needed ( it will be appended to Case #, in case not needed check the solve function)
 		std::string result;
 
 		result.append(to_string(numberOfLibraries));
@@ -70,12 +75,22 @@ struct Result
 	}
 };
 
-Result solveCase(const Input & input)
+Result solveCase(Input & input)
 {
 	Result result;
 	
-	// The actual solution goes here.. while filling "result", and reading input from "input"
+    std::sort(begin(input.libraries), end(input.libraries), [](const Library &lhs, const Library &rhs) {
+        return lhs.processDays < rhs.processDays;
+    });
 
+    int sum = 0, i = 0;
+
+    for(; i < input.libraries.size() && sum <= input.scanDays; i++) {
+        result.librariesOutputs.push_back({input.libraries[i].id, input.libraries[i].numberOfBooks, input.libraries[i].bookIds});
+        sum += input.libraries[i].processDays;
+    }
+
+    result.numberOfLibraries = i;
 	return result;
 }
 
@@ -90,14 +105,15 @@ Input getInputs()
 	input.bookScores.reserve(input.numberOfBooks);
 	for (int i = 0; i < input.numberOfBooks; ++i)
 	{
-		int bookScore;
-		cin >> bookScore;
-		input.bookScores.push_back(bookScore);
+		Book book;
+		cin >> book.score;
+		input.bookScores.push_back(book);
 	}
 
 	for (int i = 0; i < input.numberOfLibraries; ++i)
 	{
 		Library	library;
+        library.id = i;
 		cin >> library.numberOfBooks;
 		cin >> library.processDays;
 		cin >> library.shippingDays;
