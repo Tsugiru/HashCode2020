@@ -25,6 +25,7 @@ struct Library
 struct Book
 {
     int score;
+    int id;
     bool shipped = false;
 };
 
@@ -34,7 +35,7 @@ struct Input
 	int numberOfLibraries;
 	int scanDays;
 
-	std::vector<Book> bookScores;
+	std::vector<Book> books;
 	std::vector<Library> libraries;
 };
 
@@ -84,9 +85,18 @@ Result solveCase(Input & input)
     });
 
     int sum = 0, i = 0;
-
+    vector<int> used;
     for(; i < input.libraries.size() && sum <= input.scanDays; i++) {
-        result.librariesOutputs.push_back({input.libraries[i].id, input.libraries[i].numberOfBooks, input.libraries[i].bookIds});
+        vector<int> bookIdsUsed;
+
+        for(int j = 0; j < input.libraries[i].numberOfBooks; j++) {
+            int currentBookId = input.libraries[i].bookIds[j];
+            if(!input.books[currentBookId].shipped) {
+                bookIdsUsed.push_back(currentBookId);
+                input.books[currentBookId].shipped = true;
+            }
+        }
+        result.librariesOutputs.push_back({input.libraries[i].id, bookIdsUsed.size(), bookIdsUsed});
         sum += input.libraries[i].processDays;
     }
 
@@ -102,12 +112,13 @@ Input getInputs()
 	cin >> input.numberOfLibraries;
 	cin >> input.scanDays;
 
-	input.bookScores.reserve(input.numberOfBooks);
+	input.books.reserve(input.numberOfBooks);
 	for (int i = 0; i < input.numberOfBooks; ++i)
 	{
 		Book book;
+        book.id = i;
 		cin >> book.score;
-		input.bookScores.push_back(book);
+		input.books.push_back(book);
 	}
 
 	for (int i = 0; i < input.numberOfLibraries; ++i)
@@ -127,11 +138,6 @@ Input getInputs()
 		
 		input.libraries.push_back(library);
 	}
-
-	// Fill in the input with std::cin >>..
-
-	// std::cin >> ....;
-
 	return input;
 }
 
@@ -144,13 +150,5 @@ void solve(int /*caseNumber*/)
 
 int main()
 {
-	/*int numberOfTestCases = 0;
-	std::cin >> numberOfTestCases;
-
-	for (int i = 0; i < numberOfTestCases; ++i)
-	{
-		solve(i + 1);
-	}*/
-
 	solve(0);
 }
