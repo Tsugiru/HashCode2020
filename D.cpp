@@ -1,6 +1,4 @@
 #include <iostream>
-#include <random>
-#include <chrono>
 #include <string>
 #include <algorithm>
 #include <fstream>
@@ -78,45 +76,20 @@ struct Result
 	}
 };
 
-long long solvec(Result &result, Input &input) {
-    long long score = 0LL;
-    for(int i = 0, day = 0; day < input.scanDays && i < result.numberOfLibraries; i++) {
-        int currentLib = result.librariesOutputs[i].id;
-        for(int j = 0
-            ; j < result.librariesOutputs[i].numberOfBooksForScanning
-            && day + j / input.libraries[currentLib].shippingDays
-            + 1
-            + input.libraries[currentLib].processDays
-            ; j++) {
-            score += input.books[result.librariesOutputs[i].bookIds[j]].score;
-        }
-        day += input.libraries[currentLib].processDays;
-    }
-    return score;
-}
-
 Result solveCase(Input & input)
 {
-    Result result;
-    std::sort(rbegin(input.libraries), rend(input.libraries), [&input](const Library &lhs, const Library &rhs) {
-        double suml = 0, sumr = 0;
-        for(int id : lhs.bookIds) suml += input.books[id].score;
-        for(int id : rhs.bookIds) sumr += input.books[id].score;
-        return (suml * lhs.shippingDays) / (lhs.processDays) < (sumr * lhs.shippingDays) / (rhs.processDays);
+	Result result;
+	
+    std::sort(rbegin(input.libraries), rend(input.libraries), [](const Library &lhs, const Library &rhs) {
+        return lhs.numberOfBooks < rhs.numberOfBooks;
     });
 
     int i = 0;
     for(; i < input.libraries.size(); i++) {
-        if(input.libraries[i].processDays > 4) continue;
-        sort(begin(input.libraries[i].bookIds), end(input.libraries[i].bookIds), [&input](int &lhs, int &rhs){
-            return input.books[lhs].score > input.books[rhs].score;
-        });
-        vector<int> usedBooks(end(input.libraries[i].bookIds) - min(300, (int)input.libraries[i].bookIds.size()), end(input.libraries[i].bookIds));
-                            
-        result.librariesOutputs.push_back({input.libraries[i].id, usedBooks.size(), usedBooks});
+        result.librariesOutputs.push_back({input.libraries[i].id, input.libraries[i].numberOfBooks, input.libraries[i].bookIds});
     }
-    result.numberOfLibraries = result.librariesOutputs.size();
 
+    result.numberOfLibraries = i;
 	return result;
 }
 
@@ -154,6 +127,11 @@ Input getInputs()
 		
 		input.libraries.push_back(library);
 	}
+
+	// Fill in the input with std::cin >>..
+
+	// std::cin >> ....;
+
 	return input;
 }
 
@@ -166,5 +144,13 @@ void solve(int /*caseNumber*/)
 
 int main()
 {
+	/*int numberOfTestCases = 0;
+	std::cin >> numberOfTestCases;
+
+	for (int i = 0; i < numberOfTestCases; ++i)
+	{
+		solve(i + 1);
+	}*/
+
 	solve(0);
 }
